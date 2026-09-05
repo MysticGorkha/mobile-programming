@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PicVault — Paste anywhere. Instantly.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#0a0712;
+    --bg-1:#120c1f;
+    --bg-2:#170f28;
+    --violet-1:#8b5cf6;
+    --violet-2:#5b21b6;
+    --violet-glow:#a78bfa;
+    --lilac:#c4b5fd;
+    --text-hi:#f2eefb;
+    --text-mid:#b6acd1;
+    --text-low:#7c7396;
+    --glass-fill: rgba(255,255,255,0.045);
+    --glass-fill-hi: rgba(255,255,255,0.075);
+    --glass-border: rgba(196,181,253,0.16);
+    --glass-border-hi: rgba(196,181,253,0.32);
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 9px;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:
+      radial-gradient(ellipse 900px 600px at 15% -10%, rgba(139,92,246,0.22), transparent 60%),
+      radial-gradient(ellipse 800px 700px at 85% 15%, rgba(91,33,182,0.28), transparent 55%),
+      radial-gradient(ellipse 1000px 800px at 50% 100%, rgba(139,92,246,0.10), transparent 60%),
+      var(--bg-0);
+    color: var(--text-hi);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* faint grain overlay */
+  body::before{
+    content:"";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  h1,h2,h3,h4{
+    font-family: 'Sora', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text-hi);
+  }
+
+  .mono{
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  a{ color: inherit; text-decoration: none; }
+
+  .wrap{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* ---------- glass utility ---------- */
+  .glass{
+    background: var(--glass-fill);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 20px 40px -20px rgba(0,0,0,0.6);
+  }
+
+  /* ---------- nav ---------- */
+  header{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    padding: 18px 0;
+    transition: transform 0.35s ease, opacity 0.35s ease;
+  }
+  header.header-hidden{
+    transform: translateY(-130%);
+    opacity: 0;
+  }
+  .nav-inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 12px 22px;
+    border-radius: 100px;
+  }
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Sora', sans-serif;
+    font-weight:700;
+    font-size: 17px;
+    color: var(--text-hi);
+  }
+  .logo-mark{
+    width: 26px; height: 26px;
+    border-radius: 7px;
+    background: linear-gradient(145deg, var(--violet-glow), var(--violet-2));
+    position: relative;
+    flex-shrink:0;
+  }
+  .logo-mark::before, .logo-mark::after{
+    content:"";
+    position:absolute;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.85);
+  }
+  .logo-mark::before{ width:9px; height:9px; top:5px; left:5px; }
+  .logo-mark::after{ width:9px; height:9px; bottom:5px; right:5px; background: rgba(10,7,18,0.55); }
+
+  nav ul{
+    display:flex;
+    gap: 34px;
+    list-style:none;
+  }
+  nav ul li a{
+    font-size: 14px;
+    color: var(--text-mid);
+    transition: color 0.2s ease;
+  }
+  nav ul li a:hover{ color: var(--text-hi); }
+
+  .nav-cta{
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding: 11px 22px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor:pointer;
+    border: 1px solid transparent;
+    transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    white-space: nowrap;
+  }
+  .btn-primary{
+    background: linear-gradient(155deg, #a78bfa, #7c3aed 55%, #5b21b6);
+    color: #fff;
+    box-shadow: 0 8px 24px -6px rgba(139,92,246,0.55);
+  }
+  .btn-primary:hover{ transform: translateY(-1px); box-shadow: 0 12px 28px -6px rgba(139,92,246,0.7); }
+  .btn-ghost{
+    background: rgba(255,255,255,0.03);
+    border-color: var(--glass-border);
+    color: var(--text-hi);
+  }
+  .btn-ghost:hover{ border-color: var(--glass-border-hi); background: rgba(255,255,255,0.06); }
+  .btn-sm{ padding: 8px 16px; font-size: 13px; }
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding: 74px 0 40px;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 56px;
+    align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    color: var(--lilac);
+    background: rgba(139,92,246,0.09);
+    border: 1px solid rgba(139,92,246,0.25);
+    padding: 6px 13px;
+    border-radius: 100px;
+    margin-bottom: 22px;
+  }
+  .eyebrow-dot{
+    width:6px;height:6px;border-radius:50%;
+    background: var(--violet-glow);
+    box-shadow: 0 0 8px 2px rgba(167,139,250,0.7);
+  }
+  .hero h1{
+    font-size: 52px;
+    line-height: 1.08;
+    max-width: 560px;
+  }
+  .hero h1 .grad{
+    background: linear-gradient(100deg, var(--violet-glow), var(--lilac) 60%, #fff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero p.lead{
+    margin-top: 22px;
+    font-size: 16.5px;
+    color: var(--text-mid);
+    max-width: 460px;
+  }
+  .hero-actions{
+    display:flex;
+    gap:14px;
+    margin-top: 34px;
+  }
+  .hero-note{
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--text-low);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* ---------- hero visual: clipboard -> timeline ---------- */
+  .hero-visual{
+    position: relative;
+    height: 480px;
+  }
+  .stage{
+    position:absolute;
+    inset:0;
+  }
+
+  .tray{
+    position:absolute;
+    left: 0;
+    top: 18px;
+    width: 210px;
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    z-index: 3;
+  }
+  .tray-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-low);
+    margin-bottom: 12px;
+    display:flex;
+    justify-content: space-between;
+  }
+  .thumb-stack{
+    display:flex;
+    flex-direction:column;
+    gap: 8px;
+  }
+  .thumb{
+    height: 46px;
+    border-radius: 9px;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.08);
+    overflow:hidden;
+  }
+  .thumb::after{
+    content:"";
+    position:absolute; inset:0;
+    background: rgba(10,7,18,0.12);
+  }
+  .thumb-a{ background: linear-gradient(135deg,#4c2a8f,#8b5cf6); }
+  .thumb-b{ background: linear-gradient(135deg,#2c2350,#6d4fc7); }
+  .thumb-c{ background: linear-gradient(135deg,#1e1633,#4c3a8a); }
+  .thumb-d{ background: linear-gradient(135deg,#7c3aed,#c4b5fd); }
+  .thumb-active{
+    outline: 2px solid var(--violet-glow);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(139,92,246,0.15);
+  }
+
+  .cursor-chip{
+    position:absolute;
+    left: 152px;
+    top: 74px;
+    width: 46px; height: 46px;
+    border-radius: 9px;
+    background: linear-gradient(135deg,#7c3aed,#c4b5fd);
+    border: 2px solid rgba(255,255,255,0.5);
+    z-index: 6;
+    animation: dragmove 4.5s ease-in-out infinite;
+    box-shadow: 0 12px 24px -6px rgba(139,92,246,0.6);
+  }
+
+  .app-window{
+    position:absolute;
+    right: 0;
+    top: 90px;
+    width: 300px;
+    border-radius: var(--radius-lg);
+    overflow:hidden;
+    z-index: 2;
+  }
+  .app-titlebar{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--glass-border);
+  }
+  .dot{ width:8px; height:8px; border-radius:50%; background: rgba(255,255,255,0.18); }
+  .app-name{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-low);
+    margin-left: 6px;
+  }
+  .timeline-body{
+    padding: 16px 14px 20px;
+  }
+  .timeline-track{
+    height: 30px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.03);
+    border: 1px dashed rgba(196,181,253,0.18);
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .timeline-track.filled{
+    background: linear-gradient(90deg, rgba(139,92,246,0.35), rgba(196,181,253,0.5));
+    border-style: solid;
+    border-color: rgba(196,181,253,0.4);
+  }
+  .timeline-track.filled::after{
+    content: "IMG_0231.png";
+    position: absolute;
+    left: 10px; top: 50%; transform: translateY(-50%);
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.85);
+  }
+  .playhead{
+    position:absolute;
+    top: 16px; bottom: 20px;
+    left: 108px;
+    width: 2px;
+    background: var(--violet-glow);
+    box-shadow: 0 0 8px 1px rgba(167,139,250,0.8);
+  }
+
+  .glow-orb{
+    position:absolute;
+    width: 340px; height: 340px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(139,92,246,0.35), transparent 70%);
+    filter: blur(20px);
+    z-index: 0;
+    top: 40px; right: -60px;
+  }
+
+  @keyframes dragmove{
+    0%   { left: 152px; top: 74px; opacity: 0; }
+    8%   { opacity: 1; }
+    45%  { left: 152px; top: 74px; }
+    70%  { left: 330px; top: 220px; }
+    85%  { left: 330px; top: 220px; opacity: 1;}
+    92%  { opacity: 0; }
+    100% { left: 152px; top: 74px; opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .cursor-chip{ animation: none; opacity: 1; left: 330px; top: 220px; }
+  }
+
+  /* ---------- section shared ---------- */
+  section{ position: relative; z-index: 2; padding: 100px 0; }
+  .section-head{
+    max-width: 560px;
+    margin-bottom: 52px;
+  }
+  .section-head h2{
+    font-size: 34px;
+    line-height: 1.15;
+  }
+  .section-head p{
+    margin-top: 14px;
+    color: var(--text-mid);
+    font-size: 15.5px;
+  }
+  .section-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--violet-glow);
+    margin-bottom: 12px;
+  }
+
+  /* ---------- problem row ---------- */
+  .problem-row{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .problem-card{
+    padding: 26px 24px;
+    border-radius: var(--radius-md);
+  }
+  .problem-card .num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-low);
+    display:block;
+    margin-bottom: 14px;
+  }
+  .problem-card p{
+    font-size: 15px;
+    color: var(--text-mid);
+  }
+  .problem-card strong{
+    color: var(--text-hi);
+    font-weight: 500;
+  }
+
+  /* ---------- features ---------- */
+  .feature-grid{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  .feature-card{
+    padding: 28px 24px;
+    border-radius: var(--radius-md);
+    transition: border-color 0.25s ease, transform 0.25s ease, background 0.25s ease;
+  }
+  .feature-card:hover{
+    border-color: var(--glass-border-hi);
+    background: var(--glass-fill-hi);
+    transform: translateY(-3px);
+  }
+  .feature-icon{
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    display:flex; align-items:center; justify-content:center;
+    background: linear-gradient(150deg, rgba(139,92,246,0.35), rgba(91,33,182,0.35));
+    border: 1px solid rgba(196,181,253,0.25);
+  }
+  .feature-card h3{
+    font-size: 16.5px;
+    margin-bottom: 9px;
+  }
+  .feature-card p{
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.55;
+  }
+
+  /* ---------- how it works ---------- */
+  .steps{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    position: relative;
+  }
+  .step{
+    padding: 30px 26px;
+    border-radius: var(--radius-md);
+    position: relative;
+  }
+  .step-index{
+    font-family:'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 34px;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(196,181,253,0.4);
+    margin-bottom: 16px;
+    display:block;
+  }
+  .step h3{ font-size: 17px; margin-bottom: 10px; }
+  .step p{ font-size: 14px; color: var(--text-mid); }
+
+  /* ---------- compatibility ---------- */
+  .compat-panel{
+    padding: 44px;
+    border-radius: var(--radius-lg);
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .compat-text{ max-width: 340px; }
+  .compat-text h2{ font-size: 26px; margin-bottom: 12px; }
+  .compat-text p{ color: var(--text-mid); font-size: 14.5px; }
+  .compat-pills{
+    display:flex;
+    flex-wrap:wrap;
+    gap: 10px;
+    max-width: 480px;
+  }
+  .pill{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    padding: 10px 16px;
+    border-radius: 100px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--glass-border);
+    color: var(--text-hi);
+  }
+  .pill.dim{ color: var(--text-low); border-color: rgba(255,255,255,0.06); }
+
+  /* ---------- cta ---------- */
+  .cta-panel{
+    padding: 64px 56px;
+    border-radius: 28px;
+    text-align:center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-panel::before{
+    content:"";
+    position:absolute;
+    width: 500px; height:500px;
+    background: radial-gradient(circle, rgba(139,92,246,0.35), transparent 70%);
+    top: -220px; left: 50%; transform: translateX(-50%);
+    filter: blur(10px);
+  }
+  .cta-panel h2{
+    font-size: 36px;
+    max-width: 560px;
+    margin: 0 auto 16px;
+    position: relative;
+  }
+  .cta-panel p{
+    color: var(--text-mid);
+    font-size: 15.5px;
+    max-width: 440px;
+    margin: 0 auto 30px;
+    position: relative;
+  }
+  .cta-actions{
+    display:flex;
+    gap:14px;
+    justify-content:center;
+    position: relative;
+  }
+
+  /* ---------- footer ---------- */
+  footer{
+    padding: 40px 0 50px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .footer-inner{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-links{
+    display:flex;
+    gap: 26px;
+    list-style:none;
+  }
+  .footer-links a{
+    font-size: 13.5px;
+    color: var(--text-low);
+  }
+  .footer-links a:hover{ color: var(--text-mid); }
+  .footer-copy{
+    font-size: 13px;
+    color: var(--text-low);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 980px){
+    .hero-grid{ grid-template-columns: 1fr; }
+    .hero-visual{ height: 380px; margin-top: 20px; }
+    .feature-grid{ grid-template-columns: repeat(2,1fr); }
+    .problem-row{ grid-template-columns: 1fr; }
+    .steps{ grid-template-columns: 1fr; }
+    nav ul{ display:none; }
+    .compat-panel{ flex-direction: column; align-items: flex-start; }
+  }
+  @media (max-width: 560px){
+    .wrap{ padding: 0 20px; }
+    .hero h1{ font-size: 38px; }
+    .feature-grid{ grid-template-columns: 1fr; }
+    .hero-actions{ flex-direction: column; }
+    .btn{ width: 100%; }
+    .cta-actions{ flex-direction: column; }
+  }
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible{
+    outline: 2px solid var(--violet-glow);
+    outline-offset: 3px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="nav-inner glass">
+      <div class="logo">
+        <span class="logo-mark"></span>
+        PicVault
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how-it-works">How it works</a></li>
+          <li><a href="#compatibility">Compatibility</a></li>
+        </ul>
+      </nav>
+      <div class="nav-cta">
+        <a href="#download" class="btn btn-ghost btn-sm">Download</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow"><span class="eyebrow-dot"></span>Built for editors, not designers</span>
+        <h1>Every image you copy, <span class="grad">one paste away</span> from your timeline.</h1>
+        <p class="lead">PicVault keeps a running history of everything you copy — screenshots, browser images, files — so you can drop them straight into DaVinci Resolve, After Effects or Premiere Pro without ever touching a downloads folder.</p>
+        <div class="hero-actions">
+          <a href="#download" class="btn btn-primary">Download for Mac</a>
+          <a href="#how-it-works" class="btn btn-ghost">See how it works</a>
+        </div>
+        <div class="hero-note">Free while in beta · Apple Silicon &amp; Intel</div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="glow-orb"></div>
+        <div class="stage">
+          <div class="tray glass">
+            <div class="tray-label"><span>Clipboard</span><span>4</span></div>
+            <div class="thumb-stack">
+              <div class="thumb thumb-a thumb-active"></div>
+              <div class="thumb thumb-b"></div>
+              <div class="thumb thumb-c"></div>
+              <div class="thumb thumb-d"></div>
+            </div>
+          </div>
+
+          <div class="cursor-chip"></div>
+
+          <div class="app-window glass">
+            <div class="app-titlebar">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              <span class="app-name">timeline.prproj</span>
+            </div>
+            <div class="timeline-body">
+              <div class="timeline-track"></div>
+              <div class="timeline-track filled"></div>
+              <div class="timeline-track"></div>
+              <div class="playhead"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-tag">The problem</div>
+        <h2>Your editing software wasn't built for copy and paste.</h2>
+      </div>
+      <div class="problem-row">
+        <div class="problem-card glass">
+          <span class="num">01</span>
+          <p><strong>Photoshop can paste a screenshot instantly.</strong> After Effects and Resolve can't — you're stuck exporting and re-importing every time.</p>
+        </div>
+        <div class="problem-card glass">
+          <span class="num">02</span>
+          <p><strong>The screenshot you need is always buried.</strong> Twenty files deep in Downloads, named "Screenshot 2026-09-03 at 14.22.png."</p>
+        </div>
+        <div class="problem-card glass">
+          <span class="num">03</span>
+          <p><strong>Reference images from browsers get lost.</strong> You close the tab, and the image is gone — until you go find it again.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-tag">What it does</div>
+        <h2>A clipboard that remembers, for software that forgets.</h2>
+        <p>PicVault sits quietly in the background, catching every image you copy so it's ready the moment you need it.</p>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card glass">
+          <div class="feature-icon"></div>
+          <h3>Instant capture</h3>
+          <p>Copy from Chrome, Finder, Slack, or a screenshot tool — PicVault stores it the moment it hits your clipboard.</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feature-icon"></div>
+          <h3>Paste into anything</h3>
+          <p>Drop images directly into DaVinci Resolve, After Effects, Premiere Pro, and other apps that don't support native paste.</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feature-icon"></div>
+          <h3>Searchable history</h3>
+          <p>Scroll back through everything you've copied today, this week, or this project — no more hunting through folders.</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feature-icon"></div>
+          <h3>Project boards</h3>
+          <p>Group copied images into boards per project, so reference material stays organized as work moves forward.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how-it-works">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-tag">How it works</div>
+        <h2>Three steps, no exporting.</h2>
+      </div>
+      <div class="steps">
+        <div class="step glass">
+          <span class="step-index">01</span>
+          <h3>Copy anything</h3>
+          <p>An image from a browser, a screenshot, a file in Finder — copy it the way you already do.</p>
+        </div>
+        <div class="step glass">
+          <span class="step-index">02</span>
+          <h3>Open PicVault</h3>
+          <p>Your clipboard history appears in a floating panel that sits above your editing software.</p>
+        </div>
+        <div class="step glass">
+          <span class="step-index">03</span>
+          <h3>Paste into your timeline</h3>
+          <p>Drag or paste the image straight into Resolve, After Effects, or Premiere. It's imported and ready to use.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPATIBILITY -->
+  <section id="compatibility">
+    <div class="wrap">
+      <div class="compat-panel glass">
+        <div class="compat-text">
+          <h2>Works alongside the tools you already use.</h2>
+          <p>PicVault runs as a lightweight overlay, so it fits into whatever's already open on your desktop.</p>
+        </div>
+        <div class="compat-pills">
+          <span class="pill">DaVinci Resolve</span>
+          <span class="pill">After Effects</span>
+          <span class="pill">Premiere Pro</span>
+          <span class="pill">Photoshop</span>
+          <span class="pill">Figma</span>
+          <span class="pill">Blender</span>
+          <span class="pill dim">+ any app that accepts drag &amp; drop</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="download">
+    <div class="wrap">
+      <div class="cta-panel glass">
+        <h2>Stop exporting screenshots just to import them again.</h2>
+        <p>Install PicVault and keep every copied image one paste away from your timeline.</p>
+        <div class="cta-actions">
+          <a href="#" class="btn btn-primary">Download for Mac</a>
+          <a href="#" class="btn btn-ghost">Download for Windows</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div class="logo">
+      <span class="logo-mark"></span>
+      PicVault
+    </div>
+    <ul class="footer-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how-it-works">How it works</a></li>
+      <li><a href="#compatibility">Compatibility</a></li>
+    </ul>
+    <span class="footer-copy">© 2026 PicVault</span>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var header = document.querySelector('header');
+    var lastY = window.scrollY;
+    var hideThreshold = 80; // don't hide until scrolled past this
+    var ticking = false;
+
+    function onScroll(){
+      var currentY = window.scrollY;
+
+      if (currentY <= hideThreshold) {
+        header.classList.remove('header-hidden');
+      } else if (currentY > lastY) {
+        // scrolling down
+        header.classList.add('header-hidden');
+      } else if (currentY < lastY) {
+        // scrolling up
+        header.classList.remove('header-hidden');
+      }
+
+      lastY = currentY;
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', function(){
+      if (!ticking) {
+        window.requestAnimationFrame(onScroll);
+        ticking = true;
+      }
+    }, { passive: true });
+  })();
+</script>
+</body>
+</html>
