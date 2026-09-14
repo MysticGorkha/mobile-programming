@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sijan Bank</title>
+</head>
+<body>
+    <script src="process.js"></script>
+    <h1>Welcome to Sijan Bank!</h1>
+    <input type="number" id="amount" placeholder="Enter your PIN" required>
+    <button onclick="login()">Login</button> <br><br>
+    <p id="message"></p><br> <br>
+    <button onclick="checkBalance()">Check Balance</button>
+    <button onclick="deposit()">Deposit</button>
+    <button onclick="withdraw()">Withdraw</button> <br><br>
+    <input type="number" id="depositAmount" placeholder="Enter amount to deposit" required>
+    <input type="number" id="withdrawAmount" placeholder="Enter amount to withdraw" required>
+    <p id="balance"></p>
+</body>
+</html>
