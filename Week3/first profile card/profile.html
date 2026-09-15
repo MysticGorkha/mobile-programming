@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        .card {
+            width: 300px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+
+
+        .card img {
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            margin: 5px 0;
+        }
+
+        .card button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .card button:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+    <script src="profile.js"></script>
+    <script src="https://jquery.com" integrity="sha384-H1/FjDk4C7V3E5GZ2p5h5gJ2A2T5j8f3K8h4Y2o1g3V6Y7t8k9M1m2P3q4R5s6T" crossorigin="anonymous">
+    </script>
+    <div class="card">
+        <img id="pp" src="my_profile.jpg" alt="Profile Picture" width="100px" height="100px">
+        <p>Name: Sijan Khadka</p>
+        <p>Profile: Student</p>
+        <p>Address: Kalanki</p>
+        <p>Contact: 9841234567</p>
+        <img id="qr" src = "github.png" alt = "github" width = "30px" height = "30px">
+        <button id="show-qr">Show QR</button>
+        <button id="hide-qr">Hide QR</button>
+    </div>
+    
+
+    
+</body>
+</html>
