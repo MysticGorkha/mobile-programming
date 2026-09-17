@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>jQuery Practice Profile</title>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 30px;
+            font-family: Arial, sans-serif;
+            background-color: #f2f4f7;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .profile-container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        #profile-card {
+            width: 350px;
+            margin: 25px auto;
+            padding: 25px;
+            background-color: white;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        #profile-photo {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        #student-name {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        #student-bio {
+            color: #555;
+            line-height: 1.5;
+        }
+
+        #nickname-input {
+            width: 80%;
+            padding: 10px;
+            margin: 15px 0;
+            border: 1px solid #aaa;
+            border-radius: 6px;
+        }
+
+        #skills-list {
+            display: inline-block;
+            text-align: left;
+            line-height: 1.8;
+        }
+
+        #output {
+            min-height: 25px;
+            margin: 20px auto;
+            padding: 12px;
+            max-width: 500px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .button-section {
+            margin: 20px auto;
+            padding: 18px;
+            max-width: 750px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .button-section h3 {
+            margin-top: 0;
+            color: #444;
+        }
+
+        button {
+            margin: 5px;
+            padding: 9px 14px;
+            border: none;
+            border-radius: 6px;
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #217dbb;
+        }
+
+        .highlighted {
+            border: 5px solid yellow !important;
+        }
+
+        .dark-mode {
+            background-color: #222 !important;
+            color: white;
+        }
+
+        .rounded {
+            border-radius: 50% !important;
+        }
+
+        .shadow {
+            box-shadow: 0 0 18px gray;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="profile-container">
+
+        <h1>My jQuery Profile</h1>
+
+        <!-- Profile Card -->
+        <div id="profile-card">
+
+            <!-- Profile Photo -->
+            <img id="profile-photo"
+                 src="my_profile.jpg"
+                 alt="Profile Photo">
+
+            <!-- Student Name -->
+            <h2 id="student-name">Sijan Khadka</h2>
+
+            <!-- Student Bio -->
+            <p id="student-bio">
+                I am a student
+                <b>jQuery</b> and a video editor.
+            </p>
+
+            <!-- Nickname Input -->
+            <input type="text"
+                   id="nickname-input"
+                   placeholder="Enter your nickname">
+
+            <!-- Skills -->
+            <h3>My Skills</h3>
+
+            <ul id="skills-list">
+                <li>HTML</li>
+                <li>CSS</li>
+                <li>JavaScript</li>
+                <li>jQuery</li>
+            </ul>
+
+        </div>
+
+
+        <!-- Output -->
+        <div id="output">
+            Output will appear here
+        </div>
+
+
+        <!-- GET & SET -->
+        <div class="button-section">
+
+            <h3>GET & SET</h3>
+
+            <button id="show-name">
+                Show Name
+            </button>
+
+            <button id="change-name">
+                Change Name
+            </button>
+
+            <button id="show-bio">
+                Show Bio
+            </button>
+
+            <button id="get-input">
+                Get Input
+            </button>
+
+            <button id="set-input">
+                Set Input
+            </button>
+
+        </div>
+
+
+        <!-- CSS CLASSES -->
+        <div class="button-section">
+
+            <h3>CSS Classes</h3>
+
+            <button id="highlight-card">
+                Highlight Card
+            </button>
+
+            <button id="remove-highlight">
+                Remove Highlight
+            </button>
+
+            <button id="toggle-dark">
+                Toggle Dark Mode
+            </button>
+
+            <button id="toggle-rounded">
+                Toggle Rounded
+            </button>
+
+        </div>
+
+
+        <!-- CSS METHOD -->
+        <div class="button-section">
+
+            <h3>CSS Method</h3>
+
+            <button id="red-background">
+                Red Background
+            </button>
+
+            <button id="reset-background">
+                Reset Background
+            </button>
+
+        </div>
+
+
+        <!-- HIDE & SHOW -->
+        <div class="button-section">
+
+            <h3>Hide & Show</h3>
+
+            <button id="hide-photo">
+                Hide Photo
+            </button>
+
+            <button id="show-photo">
+                Show Photo
+            </button>
+
+            <button id="toggle-bio">
+                Toggle Bio
+            </button>
+
+        </div>
+
+
+        <!-- FADE -->
+        <div class="button-section">
+
+            <h3>Fade Effects</h3>
+
+            <button id="fade-out">
+                Fade Out Card
+            </button>
+
+            <button id="fade-in">
+                Fade In Card
+            </button>
+
+            <button id="fade-50">
+                Fade to 50%
+            </button>
+
+        </div>
+
+
+        <!-- SLIDE -->
+        <div class="button-section">
+
+            <h3>Slide Effects</h3>
+
+            <button id="slide-up">
+                Slide Up Skills
+            </button>
+
+            <button id="slide-down">
+                Slide Down Skills
+            </button>
+
+            <button id="slide-toggle">
+                Slide Toggle Skills
+            </button>
+
+        </div>
+
+
+        <!-- ANIMATION -->
+        <div class="button-section">
+
+            <h3>Animation</h3>
+
+            <button id="animate-card">
+                Animate Card
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- JavaScript -->
+    <script src="Profile.js"></script>
+
+</body>
+</html>
