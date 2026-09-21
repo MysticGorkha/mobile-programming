@@ -12,10 +12,8 @@ $(document).ready(function () {
         top: 0,
         left: 0
     });
-
     const rightPosition = $container.width() - $box.outerWidth();
     const bottomPosition = $container.height() - $box.outerHeight();
-
     $('button').on('click', function () {
         $box.stop(true, false)
             .css({ backgroundColor: 'yellow' })

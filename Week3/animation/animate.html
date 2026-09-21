@@ -1,28 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <script src="animate.js"></script>
-    <h1 align="center">SimpleAnimation Example</h1>
-    <button>Animate</button><br><br>
-    
-    <style>
-        button {
-            position: relative;
-            left: 10px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        div.box {
-            border: 1px solid gray;
-        }
-    </style>
-    <div class="box" style="width: 100px; border-radius: 15%; height: 100px; background-color: pink; position: relative;">
-    </div>
+    <title>Simple Animation</title>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
+<style>
+    button {
+        font-size: 16px;
+        cursor: pointer;
+        padding: 8px;
+    }
+
+    #container {
+        width: 500px;
+        height: 300px;
+        border: 1px solid gray;
+        position: relative;
+    }
+
+    #box {
+        width: 100px;
+        height: 100px;
+        background-color: pink;
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-radius: 15%;
+    }
+</style>
+
+
+</head>
+
+<body>
+<h1>Simple Animation Example</h1>
+<button id="animate">Animate</button>
+<br><br>
+<div id="container">
+    <div id="box"></div>
+</div>
+<script src="animate.js"></script>
 </body>
 </html>
