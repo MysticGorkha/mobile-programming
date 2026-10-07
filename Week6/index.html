@@ -7,17 +7,22 @@
 </head>
 <body>
     <h1>Hello, World!</h1>
-    <script type="module" src="Script.js"></script>
 
-    <button onclick="addUsers()">Add 5 users</button>
-    <br><br>
-
-    <button onclick = readUsers(1)>Read User 1</button>
-    <button onclick = readUsers(2)>Read User 2</button>
-    <button onclick = readUsers(3)>Read User 3</button>
-    <button onclick = readUsers(4)>Read User 4</button>
-    <button onclick = readUsers(5)>Read User 5</button>
-
+    <button onclick="window.writeUserData('1', { fname: 'Abiral', lname: 'Khanal', email: 'abiral.khanal@example.com' })">Add User 1</button>
+    <button onclick="window.writeUserData('2', { fname: 'Sijan', lname: 'Khanal', email: 'sijan.khanal@example.com' })">Add User 2</button>
+    <button onclick="window.writeUserData('3', { fname: 'Prashant', lname: 'Khanal', email: 'prashant.khanal@example.com' })">Add User 3</button>
+    <button onclick="window.writeUserData('4', { fname: 'Rajesh', lname: 'Khanal', email: 'rajesh.khanal@example.com' })">Add User 4</button>
+    <button onclick="window.writeUserData('5', { fname: 'Ramesh', lname: 'Khanal', email: 'ramesh.khanal@example.com' })">Add User 5</button>
     
+    <p id="statusMessage" role="status"></p>
+
+    <h2>Read user data</h2>
+    <button type="button" data-user-id="1">Read User 1</button>
+    <button type="button" data-user-id="2">Read User 2</button>
+    <button type="button" data-user-id="3">Read User 3</button>
+    <button type="button" data-user-id="4">Read User 4</button>
+    <button type="button" data-user-id="5">Read User 5</button>
+
+    <script type="module" src="Script.js"></script>
 </body>
 </html>
